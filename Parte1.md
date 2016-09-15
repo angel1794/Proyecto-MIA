@@ -3,9 +3,9 @@ Proyecto de portafolio 6 activos Markowitz
 
 # -*- coding: utf-8 -*-
 """
-Created on Mon Sep 05 07:33:37 2016
+Created on 
 
-@author: if692630
+@author: 
 """
 
 import numpy as np;
@@ -16,7 +16,7 @@ import datetime;
 #%%
 #Descargas precios de yahoo
 start = datetime.datetime(2016,1,1);
-end = datetime.datetime(2016,9,2);
+end = datetime.datetime(2016,9,14);
 grum = wb.DataReader("GRUMAB.MX",'yahoo',start,end);
 bimb = wb.DataReader("BIMBOA.MX",'yahoo',start,end);
 sori = wb.DataReader("SORIANAB.MX",'yahoo',start,end);
