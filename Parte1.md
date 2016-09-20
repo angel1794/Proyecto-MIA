@@ -16,15 +16,21 @@ import datetime;
 #%%
 #Descargas precios de yahoo
 start = datetime.datetime(2016,1,1);
-end = datetime.datetime(2016,9,14);
+end = datetime.datetime(2016,9,19);
 grum = wb.DataReader("GRUMAB.MX",'yahoo',start,end);
 bimb = wb.DataReader("BIMBOA.MX",'yahoo',start,end);
 sori = wb.DataReader("SORIANAB.MX",'yahoo',start,end);
+arca = wb.DataReader("AC.MX",'yahoo',start,end);
+alfa = wb.DataReader("ALFAA.MX",'yahoo',start,end);
+alpe = wb.DataReader("ALPEKA.MX",'yahoo',start,end);
 
 #%%
 Prgrum = grum.values[:,5];
 Prbimb = bimb.values[:,5];
 Prsori = sori.values[:,5];
+Prarca = arca.values[:,5];
+Pralfa = alfa.values[:,5];
+Pralpe = alpe.values[:,5];
 
 ndata=Prgrum.size;
 
@@ -32,11 +38,17 @@ ndata=Prgrum.size;
 rendgrum = (Prgrum[1:ndata]/Prgrum[0:ndata-1])-1;
 rendbimb = (Prbimb[1:ndata]/Prbimb[0:ndata-1])-1;
 rendsori = (Prsori[1:ndata]/Prsori[0:ndata-1])-1;
+rendarca = (Prarca[1:ndata]/Prarca[0:ndata-1])-1;
+rendalfa = (Pralfa[1:ndata]/Pralfa[0:ndata-1])-1;
+rendalpe = (Pralpe[1:ndata]/Pralpe[0:ndata-1])-1;
 
-data = np.zeros((ndata-1,3))
+data = np.zeros((ndata-1,6))
 data[:,0]=rendgrum;
 data[:,1]=rendbimb;
 data[:,2]=rendsori;
+data[:,3]=rendarca;
+data[:,4]=rendalfa;
+data[:,5]=rendalpe;
 
 rende = np.mean(data,0);
 covs = np.cov(data,rowvar=False);
@@ -59,7 +71,7 @@ def Markow(part,rende,covs):
     riskp = np.transpose(riskp[np.arange(0,npart),np.arange(0,npart)]);
     return np.array(np.transpose(rendp)),np.array(np.transpose(riskp))
 
-def porta(x1,x2,x3,rende,covs):
+def porta(x1,x2,x3,x4,x5,x6,rende,covs):
     nx = np.size(x1);
     restric1 = np.zeros(nx);
     restric2 = np.zeros(nx);
