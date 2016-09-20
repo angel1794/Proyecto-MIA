@@ -1,5 +1,5 @@
 # Portafolio
-Proyecto de portafolio 6 activos Markowitz
+#Proyecto de portafolio 6 activos Markowitz
 
 # -*- coding: utf-8 -*-
 """
@@ -80,6 +80,12 @@ def porta(x1,x2,x3,x4,x5,x6,rende,covs):
     restric5 = np.zeros(nx);
     restric6 = np.zeros(nx);
     restric7 = np.zeros(nx);
+    restric8 = np.zeros(nx);
+    restric9 = np.zeros(nx);
+    restric10 = np.zeros(nx);
+    restric11 = np.zeros(nx);
+    restric12 = np.zeros(nx);
+    restric13 = np.zeros(nx);
     alfa1 = 1000;
     alfa2 = 1000;
     alfa3 = 1000;
@@ -87,6 +93,13 @@ def porta(x1,x2,x3,x4,x5,x6,rende,covs):
     alfa5 = 1000;
     alfa6 = 1000;
     alfa7 = 1000;
+    alfa8 = 1000;
+    alfa9 = 1000;
+    alfa10 = 1000;
+    alfa11 = 1000;
+    alfa12 = 1000;
+    alfa13 = 1000;
+    
     #x1>=0
     index = ((-x1)>0);
     restric1[index] = (-x1[index])*alfa1;
@@ -99,24 +112,45 @@ def porta(x1,x2,x3,x4,x5,x6,rende,covs):
     #x2-1<=0
     index = ((x2-1)>0);
     restric4[index] = (x2[index]-1)*alfa4;
-    #x1+2*x2<=10
-    restric5 = np.abs(x1+x2+x3-1)*alfa5; 
+    #x1+x2+x3+x4+x5+x6<=1
+    restric5 = np.abs(x1+x2+x3+x4+x5+x6-1)*alfa5; 
     #x3>=0
     index = ((-x3)>0);
     restric6[index] = (-x3[index])*alfa6;
     #x3-1<=0
     index = ((x3-1)>0);
     restric7[index] = (x3[index]-1)*alfa7;
+    #x4>=0
+    index = ((-x4)>0);
+    restric8[index] = (-x4[index])*alfa8;
+    #x4-1<=0
+    index = ((x1-1)>0);
+    restric9[index] = (x1[index]-1)*alfa9;
+    #x5>=0
+    index = ((-x5)>0);
+    restric10[index] = (-x5[index])*alfa10;
+    #x5-1<=0
+    index = ((x5-1)>0);
+    restric11[index] = (x5[index]-1)*alfa11;
+    #x6>=0
+    index = ((-x6)>0);
+    restric12[index] = (-x6[index])*alfa12;
+    #x6-1<=0
+    index = ((x6-1)>0);
+    restric13[index] = (x6[index]-1)*alfa13;
     
     beta1=0;
     beta2=1;
     
-    part = np.zeros((nx,3));
+    part = np.zeros((nx,6));
     part[:,0] = x1;
     part[:,1] = x2;
     part[:,2] = x3; 
+    part[:,3] = x4;
+    part[:,4] = x5;
+    part[:,5] = x6; 
     Rp,Sp = Markow(part,rende,covs)
-    return -beta1*Rp+beta2*Sp+restric1+restric2+restric3+restric4+restric5+restric6+restric7;
+    return -beta1*Rp+beta2*Sp+restric1+restric2+restric3+restric4+restric5+restric6+restric7+restric8+restric9+restric10+restric11+restric12+restric13;
 
 #%%
 """
@@ -144,6 +178,20 @@ x3pl = x3;
 x3pg = 0;
 vx3 = np.zeros(npart);
 
+x4 = np.random.rand(npart);
+x4pl = x4;
+x4pg = 0;
+vx4 = np.zeros(npart);
+
+x5 = np.random.rand(npart);
+x5pl = x5;
+x5pg = 0;
+vx5 = np.zeros(npart);
+
+x6 = np.random.rand(npart);
+x6pl = x6;
+x6pg = 0;
+vx6 = np.zeros(npart);
 #%%
 fpl = 1000000*np.ones(npart);
 fpg = 1000000;
@@ -151,7 +199,7 @@ fpg = 1000000;
 for k in range(0,niter):
     
     # evaluación de la función a minimizar
-    fp = porta(x1,x2,x3,rende,covs);
+    fp = porta(x1,x2,x3,x4,x5,x6,rende,covs);
     fp = np.reshape(fp,npart);
     # Encontrar el minimo global
     index = np.argmin(fp)
@@ -159,6 +207,9 @@ for k in range(0,niter):
         x1pg = x1[index];
         x2pg = x2[index];
         x3pg = x3[index];
+        x4pg = x4[index];
+        x5pg = x5[index];
+        x6pg = x6[index];
         fpg = fp[index];
         
     # Encontrar el minimo local de cada particulo
@@ -167,6 +218,9 @@ for k in range(0,niter):
             x1pl[ind] = x1[ind];
             x2pl[ind] = x2[ind];
             x3pl[ind] = x3[ind];
+            x4pl[ind] = x4[ind];
+            x5pl[ind] = x5[ind];
+            x6pl[ind] = x6[ind];
             fpl[ind] = fp[ind];
             
     
@@ -180,16 +234,15 @@ for k in range(0,niter):
     vx3=vx3 + c1*np.random.rand(npart)*(x3pg-x3)\
     + c2*np.random.rand(npart)*(x3pl-x3)
     x3 = x3 + vx3;
-
-#%%
-#X1 = np.arange(-10,10,0.01);
-#X2 = np.arange(-10,10,0.01);
-#X1,X2 = np.meshgrid(X1,X2);
-#X1V = np.reshape(X1,4000000);
-#X2V = np.reshape(X2,4000000);
-#Z = porta(X1V,X2V);
-#Z = np.reshape(Z,(2000,2000));
-#plt.contour(X1,X2,Z,20);
+    vx4=vx4 + c1*np.random.rand(npart)*(x4pg-x4)\
+    + c2*np.random.rand(npart)*(x4pl-x4)
+    x4 = x4 + vx4;
+    vx5=vx5 + c1*np.random.rand(npart)*(x5pg-x5)\
+    + c2*np.random.rand(npart)*(x5pl-x5)
+    x5 = x5 + vx5;
+    vx6=vx6 + c1*np.random.rand(npart)*(x6pg-x6)\
+    + c2*np.random.rand(npart)*(x6pl-x6)
+    x6 = x6 + vx6;
 
 #%%
 plt.figure(1);
