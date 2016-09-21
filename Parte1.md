@@ -1,11 +1,11 @@
 # Portafolio
-#Proyecto de portafolio 6 activos Markowitz
+#Proyecto Métodos de Inteligencia Artificial
 
 # -*- coding: utf-8 -*-
 """
 Created on 
 
-@author: 
+@author: Rodrigo Castillo, Ángel Pérez, Diego Villalobos
 """
 
 import numpy as np;
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import pandas.io.data as wb;
 import datetime;
 
-#%%
+#%% Portafolio 6 Activos
 #Descargas precios de yahoo
 start = datetime.datetime(2016,1,1);
 end = datetime.datetime(2016,9,19);
@@ -254,3 +254,85 @@ plt.axis([-0.5,1.5,-0.5,1.5]);
 plt.title('Resultados: X1 = %.4f, X2 = %.4f, X3 = %.4f, fp = %.4f ' % (x1pg,x2pg,x3pg,fpg));
 plt.show();
 print('Resultados: X1 = %.4f, X2 = %.4f, X3 = %.4f, fp = %.4f '% (x1pg,x2pg,x3pg,fpg));
+
+#%% Promedio Móvil
+#%%
+data = np.reshape(pricegrum,(ndata,1));
+data = np.append(np.reshape(np.arange(0,ndata),(ndata,1)),data,axis=1);
+
+#%%
+plt.plot(data[:,0],data[:,1],'b-');
+plt.xlabel('dia');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+
+#%% Declaracion de funcion de compra y venta
+def simtrading_prom(data,nmovil,cash0,accion0,com):
+    #nmovil = 10; #numero de dias del promedio movil
+    #cash0 = 1000000; #dinero disponible para comprar acciones
+    #accion0 = 0; #numero de acciones disponibles para vender
+    #com = 0.0029; # porcentaje de cobro de comision por operacion
+    ndata,temp = np.shape(data); #numero de datos disponibles para simular
+    promovil = np.zeros((ndata,1)); # iniciar el vector donde se guardara el promedio movil
+    numaccion = np.ones((ndata+1,1))*accion0; # iniciar el vector donde se guardara el numero de acciones
+    cash = np.ones((ndata+1,1))*cash0; # iniciar el vector donde se guardara el numero de acciones
+    balance = np.ones((ndata+1,1))*(cash+accion0*data[nmovil-1,1]);
+    
+    for k in range(nmovil,ndata):
+        #calculo del promedio movil
+        promovil[k,0] = np.mean(data[k-nmovil:k,1]);
+        
+        # simulacion de compra y venta
+        if data[k,1]>=promovil[k,0]:
+            #compra
+            temp = np.floor(cash[k,0]/(data[k,1]*(1+com))); #acciones para que me alcanzan
+            numaccion[k+1,0] = numaccion[k,0]+temp; # actualizo el numero de acciones
+            cash[k+1,0] = cash[k,0]-temp*data[k,1]*(1+com); #actualizo el cash
+            balance[k+1,0] = cash[k+1,0]+numaccion[k+1,0]*data[k,1];
+        else:
+            #vende
+            numaccion[k+1,0] = 0;
+            cash[k+1,0] = cash[k,0]+numaccion[k,0]*data[k,1]*(1-com);
+            balance[k+1,0] = cash[k+1,0]+numaccion[k+1,0]*data[k,1];
+    
+    # La funcion regresa el promedio movil, el balance de la cuenta simulada,
+    # el comportamiento del cash de la cuenta y el comportamiento de las acciones
+    return promovil,balance,cash,numaccion
+
+
+#%%
+#Uso de la funcion
+nmovil = 100; #numero de dias del promedio movil
+cash0 = 1000000; #dinero disponible para comprar acciones
+accion0 = 0; #numero de acciones disponibles para vender
+com = 0.0029; # porcentaje de cobro de comision por operacion
+promovil,balance,cash,numaccion = simtrading_prom(data,nmovil,cash0,accion0,com);
+
+#calculo del rendimiento promedio del balance final
+rend = (balance[nmovil+1:ndata]/balance[nmovil:ndata-1])-1;
+rendm = np.mean(rend);
+riskm = np.std(rend);
+rendf = (balance[-1,0]/cash0)-1;
+print('Rendm = %.4f, Riskm = %.4f, Rendf = %.4f' % (rendm*100,riskm*100,rendf*100));
+
+#%%
+ndata,temp = np.shape(data);
+t = np.reshape(np.arange(0,ndata),(ndata,1));
+t1 = np.reshape(np.arange(0,ndata+1),(ndata+1,1));
+plt.figure(1);
+plt.subplot(3,1,1);
+plt.plot(data[nmovil:,0],data[nmovil:,1],'b-',t[nmovil:,0],promovil[nmovil:,0],'r-');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,2);
+plt.plot(t1[nmovil:,0],numaccion[nmovil:,0],'b-');
+plt.ylabel('acciones');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,3);
+plt.plot(t1[nmovil:,0],balance[nmovil:,0],'b-');
+plt.ylabel('balance');
+plt.xlabel('dia');
+plt.grid(color='k', linestyle='--');
+plt.show();
