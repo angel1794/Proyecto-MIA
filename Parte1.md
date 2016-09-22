@@ -246,14 +246,14 @@ for k in range(0,niter):
 
 #%%
 plt.figure(1);
-plt.plot(x1,x2,'b.',x1pg,x2pg,'go',0,0,'ro');
+plt.plot(x1,x2,'b.',x1pg,x2pg,'go',x3pg,x4pg,'go',x5pg,x6pg,'go',0,0,'ro');
 plt.plot([0,0],[-10,10],'k--',[-10,10],[0,0],'k--',[0,1],[1,0],'k--',[1,1],[-10,10],'k--',[-10,10],[1,1],'k--');
 plt.xlabel('X1');
 plt.ylabel('X2');
 plt.axis([-0.5,1.5,-0.5,1.5]);
-plt.title('Resultados: X1 = %.4f, X2 = %.4f, X3 = %.4f, fp = %.4f ' % (x1pg,x2pg,x3pg,fpg));
+#plt.title('Resultados: X1 = %.4f, X2 = %.4f, X3 = %.4f, fp = %.4f ' % (x1pg,x2pg,x3pg,fpg));
 plt.show();
-print('Resultados: X1 = %.4f, X2 = %.4f, X3 = %.4f, fp = %.4f '% (x1pg,x2pg,x3pg,fpg));
+print('Resultados: X1 = %.4f, X2 = %.4f, X3 = %.4f, X4 = %.4f, X5 = %.4f, X6 = %.4f, fp = %.4f '% (x1pg,x2pg,x3pg,x4pg,x5pg,x6pg,fpg));
 
 #%% Promedio Móvil
 #%%
