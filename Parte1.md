@@ -139,7 +139,7 @@ def porta(x1,x2,x3,x4,x5,x6,rende,covs):
     index = ((x6-1)>0);
     restric13[index] = (x6[index]-1)*alfa13;
     
-    beta1=0;
+    beta1=1;
     beta2=1;
     
     part = np.zeros((nx,6));
@@ -153,6 +153,14 @@ def porta(x1,x2,x3,x4,x5,x6,rende,covs):
     return -beta1*Rp+beta2*Sp+restric1+restric2+restric3+restric4+restric5+restric6+restric7+restric8+restric9+restric10+restric11+restric12+restric13;
 
 #%%
+npa=100
+nte, nac = np.shape(data);
+part = np.random.rand(npa,nac);
+spart = np.sum(part,1);
+for k in range (0,nac):
+    part[:,k]=part[:,k]/spart;
+    
+rendp, riskp = Markow(part,rende,covs)
 """
 # Crear las particulas iniciales
 """
@@ -244,95 +252,18 @@ for k in range(0,niter):
     + c2*np.random.rand(npart)*(x6pl-x6)
     x6 = x6 + vx6;
 
+Pre, Pri = Markow(np.reshape([x1pg,x2pg,x3pg,x4pg,x5pg,x6pg],(1,6)),rende,covs)
 #%%
-plt.figure(1);
-plt.plot(x1,x2,'b.',x1pg,x2pg,'go',x3pg,x4pg,'go',x5pg,x6pg,'go',0,0,'ro');
-plt.plot([0,0],[-10,10],'k--',[-10,10],[0,0],'k--',[0,1],[1,0],'k--',[1,1],[-10,10],'k--',[-10,10],[1,1],'k--');
-plt.xlabel('X1');
-plt.ylabel('X2');
-plt.axis([-0.5,1.5,-0.5,1.5]);
-#plt.title('Resultados: X1 = %.4f, X2 = %.4f, X3 = %.4f, fp = %.4f ' % (x1pg,x2pg,x3pg,fpg));
+plt.plot(riskp,rendp,'b.',Pre,Pri,'go');
+plt.ylabel('Rendimiento');
+plt.xlabel('Riesgo');
 plt.show();
+#plt.figure(1);
+#plt.plot(x1,x2,'b.',x1pg,x2pg,'go',x3pg,x4pg,'go',x5pg,x6pg,'go',0,0,'ro');
+#plt.plot([0,0],[-10,10],'k--',[-10,10],[0,0],'k--',[0,1],[1,0],'k--',[1,1],[-10,10],'k--',[-10,10],[1,1],'k--');
+#plt.xlabel('X1');
+#plt.ylabel('X2');
+#plt.axis([-0.5,1.5,-0.5,1.5]);
+##plt.title('Resultados: X1 = %.4f, X2 = %.4f, X3 = %.4f, fp = %.4f ' % (x1pg,x2pg,x3pg,fpg));
+#plt.show();
 print('Resultados: X1 = %.4f, X2 = %.4f, X3 = %.4f, X4 = %.4f, X5 = %.4f, X6 = %.4f, fp = %.4f '% (x1pg,x2pg,x3pg,x4pg,x5pg,x6pg,fpg));
-
-#%% Promedio Móvil
-#%%
-data = np.reshape(pricegrum,(ndata,1));
-data = np.append(np.reshape(np.arange(0,ndata),(ndata,1)),data,axis=1);
-
-#%%
-plt.plot(data[:,0],data[:,1],'b-');
-plt.xlabel('dia');
-plt.ylabel('precio');
-plt.grid(color='k', linestyle='--');
-plt.show();
-
-
-#%% Declaracion de funcion de compra y venta
-def simtrading_prom(data,nmovil,cash0,accion0,com):
-    #nmovil = 10; #numero de dias del promedio movil
-    #cash0 = 1000000; #dinero disponible para comprar acciones
-    #accion0 = 0; #numero de acciones disponibles para vender
-    #com = 0.0029; # porcentaje de cobro de comision por operacion
-    ndata,temp = np.shape(data); #numero de datos disponibles para simular
-    promovil = np.zeros((ndata,1)); # iniciar el vector donde se guardara el promedio movil
-    numaccion = np.ones((ndata+1,1))*accion0; # iniciar el vector donde se guardara el numero de acciones
-    cash = np.ones((ndata+1,1))*cash0; # iniciar el vector donde se guardara el numero de acciones
-    balance = np.ones((ndata+1,1))*(cash+accion0*data[nmovil-1,1]);
-    
-    for k in range(nmovil,ndata):
-        #calculo del promedio movil
-        promovil[k,0] = np.mean(data[k-nmovil:k,1]);
-        
-        # simulacion de compra y venta
-        if data[k,1]>=promovil[k,0]:
-            #compra
-            temp = np.floor(cash[k,0]/(data[k,1]*(1+com))); #acciones para que me alcanzan
-            numaccion[k+1,0] = numaccion[k,0]+temp; # actualizo el numero de acciones
-            cash[k+1,0] = cash[k,0]-temp*data[k,1]*(1+com); #actualizo el cash
-            balance[k+1,0] = cash[k+1,0]+numaccion[k+1,0]*data[k,1];
-        else:
-            #vende
-            numaccion[k+1,0] = 0;
-            cash[k+1,0] = cash[k,0]+numaccion[k,0]*data[k,1]*(1-com);
-            balance[k+1,0] = cash[k+1,0]+numaccion[k+1,0]*data[k,1];
-    
-    # La funcion regresa el promedio movil, el balance de la cuenta simulada,
-    # el comportamiento del cash de la cuenta y el comportamiento de las acciones
-    return promovil,balance,cash,numaccion
-
-
-#%%
-#Uso de la funcion
-nmovil = 100; #numero de dias del promedio movil
-cash0 = 1000000; #dinero disponible para comprar acciones
-accion0 = 0; #numero de acciones disponibles para vender
-com = 0.0029; # porcentaje de cobro de comision por operacion
-promovil,balance,cash,numaccion = simtrading_prom(data,nmovil,cash0,accion0,com);
-
-#calculo del rendimiento promedio del balance final
-rend = (balance[nmovil+1:ndata]/balance[nmovil:ndata-1])-1;
-rendm = np.mean(rend);
-riskm = np.std(rend);
-rendf = (balance[-1,0]/cash0)-1;
-print('Rendm = %.4f, Riskm = %.4f, Rendf = %.4f' % (rendm*100,riskm*100,rendf*100));
-
-#%%
-ndata,temp = np.shape(data);
-t = np.reshape(np.arange(0,ndata),(ndata,1));
-t1 = np.reshape(np.arange(0,ndata+1),(ndata+1,1));
-plt.figure(1);
-plt.subplot(3,1,1);
-plt.plot(data[nmovil:,0],data[nmovil:,1],'b-',t[nmovil:,0],promovil[nmovil:,0],'r-');
-plt.ylabel('precio');
-plt.grid(color='k', linestyle='--');
-plt.subplot(3,1,2);
-plt.plot(t1[nmovil:,0],numaccion[nmovil:,0],'b-');
-plt.ylabel('acciones');
-plt.grid(color='k', linestyle='--');
-plt.subplot(3,1,3);
-plt.plot(t1[nmovil:,0],balance[nmovil:,0],'b-');
-plt.ylabel('balance');
-plt.xlabel('dia');
-plt.grid(color='k', linestyle='--');
-plt.show();
