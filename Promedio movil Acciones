@@ -1,0 +1,308 @@
+import numpy as np;
+
+PGr = 0;
+PBi = 0;
+PSo = 0;
+PAr = 0;
+PAr = 0;
+PAl = 0;
+PAlp = 0;
+
+PGr = np.random.uniform(0,1);
+PBi = np.random.uniform(0,1-PBi);
+PSo = np.random.uniform(0,1-(PGr+PBi));
+PAr = np.random.uniform(0,1-(PGr+PBi+PSo));
+PAl = np.random.uniform(0,1-(PGr+PBi+PSo+PAr));
+PAlp = 1-(PGr+PBi+PSo+PAr+PAl)
+suma = PGr+PBi+PSo+PAr+PAl+PAlp;
+
+
+
+#%%
+## Primer accion ----------------------------------------------------------------------------------------------
+ndataGr=np.size(Prgrum)
+dataGr = np.reshape(Prgrum,(ndataGr,1));
+dataGr = np.append(np.reshape(np.arange(0,ndataGr),(ndataGr,1)),dataGr,axis=1);
+
+plt.plot(dataGr[:,0],dataGr[:,1],'b-');
+plt.xlabel('dia');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+#Uso de la funcion
+nmovilGr = 15; #numero de dias del promedio movil
+cashGr = 1000000; #dinero disponible para comprar acciones
+accionGr = 0; #numero de acciones disponibles para vender
+com = 0.0029; # porcentaje de cobro de comision por operacion
+promovil,balance,cash,numaccion = simtrading_prom(dataGr,nmovilGr,cashGr,accionGr,com);
+
+#calculo del rendimiento promedio del balance final
+rend = (balance[nmovilGr+1:ndataGr]/balance[nmovilGr:ndataGr-1])-1;
+rendGr = np.mean(rend);
+riskGr = np.std(rend);
+rendfGr = (balance[-1,0]/cashGr)-1;
+print('Rendm = %.4f, Riskm = %.4f, Rendf = %.4f' % (rendGr*100,riskGr*100,rendfGr*100));
+
+ndataGr,temp = np.shape(dataGr); #####------####-------------#####---------------#####------------#####---------###
+t = np.reshape(np.arange(0,ndataGr),(ndataGr,1));
+t1 = np.reshape(np.arange(0,ndataGr+1),(ndataGr+1,1));
+plt.figure(1);
+plt.subplot(3,1,1);
+plt.plot(dataGr[nmovilGr:,0],dataGr[nmovilGr:,1],'b-',t[nmovilGr:,0],promovil[nmovilGr:,0],'r-');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,2);
+plt.plot(t1[nmovilGr:,0],numaccion[nmovilGr:,0],'b-');
+plt.ylabel('acciones');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,3);
+plt.plot(t1[nmovilGr:,0],balance[nmovilGr:,0],'b-');
+plt.ylabel('balance');
+plt.xlabel('dia');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+
+
+
+
+#%%
+## Segunda accion ----------------------------------------------------------------------------------------------
+ndataBi=np.size(Prbimb)
+dataBi = np.reshape(Prbimb,(ndataBi,1));
+dataBi = np.append(np.reshape(np.arange(0,ndataBi),(ndataBi,1)),dataBi,axis=1);
+
+plt.plot(dataBi[:,0],dataBi[:,1],'b-');
+plt.xlabel('dia');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+#Uso de la funcion
+nmovilBi = 15; #numero de dias del promedio movil
+cashBi = 1000000; #dinero disponible para comprar acciones
+accionBi = 0; #numero de acciones disponibles para vender
+com = 0.0029; # porcentaje de cobro de comision por operacion
+promovil,balance,cash,numaccion = simtrading_prom(dataBi,nmovilBi,cashBi,accionBi,com);
+
+#calculo del rendimiento promedio del balance final
+rendBi = (balance[nmovilBi+1:ndataBi]/balance[nmovilBi:ndataBi-1])-1;
+rendBi = np.mean(rendBi);
+riskBi = np.std(rendBi);
+rendfBi = (balance[-1,0]/cashBi)-1;
+print('Rendm = %.4f, Riskm = %.4f, Rendf = %.4f' % (rendBi*100,riskBi*100,rendfBi*100));
+
+ndataBi,temp = np.shape(dataBi); #####------####-------------#####---------------#####------------#####---------###
+t = np.reshape(np.arange(0,ndataBi),(ndataBi,1));
+t1 = np.reshape(np.arange(0,ndataBi+1),(ndataBi+1,1));
+plt.figure(1);
+plt.subplot(3,1,1);
+plt.plot(dataBi[nmovilBi:,0],dataBi[nmovilBi:,1],'b-',t[nmovilBi:,0],promovil[nmovilBi:,0],'r-');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,2);
+plt.plot(t1[nmovilBi:,0],numaccion[nmovilBi:,0],'b-');
+plt.ylabel('acciones');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,3);
+plt.plot(t1[nmovilBi:,0],balance[nmovilBi:,0],'b-');
+plt.ylabel('balance');
+plt.xlabel('dia');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+
+
+#%%
+## tercer  accion ----------------------------------------------------------------------------------------------
+
+ndataSo=np.size(Prsori)
+dataSo = np.reshape(Prsori,(ndataSo,1));
+dataSo = np.append(np.reshape(np.arange(0,ndataSo),(ndataSo,1)),dataSo,axis=1);
+
+plt.plot(dataSo[:,0],dataSo[:,1],'b-');
+plt.xlabel('dia');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+#Uso de la funcion
+nmovilSo = 15; #numero de dias del promedio movil
+cashSo = 1000000; #dinero disponible para comprar acciones
+accionSo = 0; #numero de acciones disponibles para vender
+com = 0.0029; # porcentaje de cobro de comision por operacion
+promovil,balance,cash,numaccion = simtrading_prom(dataSo,nmovilSo,cashSo,accionSo,com);
+
+#calculo del rendimiento promedio del balance final
+rendSo = (balance[nmovilSo+1:ndataSo]/balance[nmovilSo:ndataSo-1])-1;
+rendSo = np.mean(rendSo);
+riskSo = np.std(rendSo);
+rendfSo = (balance[-1,0]/cashSo)-1;
+print('Rendm = %.4f, Riskm = %.4f, Rendf = %.4f' % (rendSo*100,riskSo*100,rendfSo*100));
+
+ndataSo,temp = np.shape(dataSo); #####------####-------------#####---------------#####------------#####---------###
+t = np.reshape(np.arange(0,ndataSo),(ndataSo,1));
+t1 = np.reshape(np.arange(0,ndataSo+1),(ndataSo+1,1));
+plt.figure(1);
+plt.subplot(3,1,1);
+plt.plot(dataSo[nmovilSo:,0],dataSo[nmovilSo:,1],'b-',t[nmovilSo:,0],promovil[nmovilSo:,0],'r-');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,2);
+plt.plot(t1[nmovilSo:,0],numaccion[nmovilSo:,0],'b-');
+plt.ylabel('acciones');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,3);
+plt.plot(t1[nmovilSo:,0],balance[nmovilSo:,0],'b-');
+plt.ylabel('balance');
+plt.xlabel('dia');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+
+#%%
+## Cuarta  accion ----------------------------------------------------------------------------------------------
+ndataAr=np.size(Prarca)
+dataAr = np.reshape(Prarca,(ndataAr,1));
+dataAr = np.append(np.reshape(np.arange(0,ndataAr),(ndataAr,1)),dataAr,axis=1);
+
+plt.plot(dataAr[:,0],dataAr[:,1],'b-');
+plt.xlabel('dia');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+#Uso de la funcion
+nmovilAr = 15; #numero de dias del promedio movil
+cashAr = 1000000; #dinero disponible para comprar acciones
+accionAr = 0; #numero de acciones disponibles para vender
+com = 0.0029; # porcentaje de cobro de comision por operacion
+promovil,balance,cash,numaccion = simtrading_prom(dataSo,nmovilAr,cashAr,accionAr,com);
+
+#calculo del rendimiento promedio del balance final
+rendAr = (balance[nmovilAr+1:ndataAr]/balance[nmovilAr:ndataAr-1])-1;
+rendAr = np.mean(rendAr);
+riskAr = np.std(rendAr);
+rendfAr = (balance[-1,0]/cashAr)-1;
+print('Rendm = %.4f, Riskm = %.4f, Rendf = %.4f' % (rendAr*100,riskAr*100,rendfAr*100));
+
+ndataAr,temp = np.shape(dataAr); #####------####-------------#####---------------#####------------#####---------###
+t = np.reshape(np.arange(0,ndataAr),(ndataAr,1));
+t1 = np.reshape(np.arange(0,ndataAr+1),(ndataAr+1,1));
+plt.figure(1);
+plt.subplot(3,1,1);
+plt.plot(dataAr[nmovilAr:,0],dataAr[nmovilAr:,1],'b-',t[nmovilAr:,0],promovil[nmovilAr:,0],'r-');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,2);
+plt.plot(t1[nmovilAr:,0],numaccion[nmovilAr:,0],'b-');
+plt.ylabel('acciones');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,3);
+plt.plot(t1[nmovilAr:,0],balance[nmovilAr:,0],'b-');
+plt.ylabel('balance');
+plt.xlabel('dia');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+
+
+#%%
+## Quinta  accion ----------------------------------------------------------------------------------------------
+
+Pralfa = alfa.values[:,5];
+Pralpe = alpe.values[:,5];
+
+ndataAl=np.size(Pralfa)
+dataAl = np.reshape(Prarca,(ndataAl,1));
+dataAl = np.append(np.reshape(np.arange(0,ndataAl),(ndataAl,1)),dataAl,axis=1);
+
+plt.plot(dataAl[:,0],dataAl[:,1],'b-');
+plt.xlabel('dia');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+#Uso de la funcion
+nmovilAl = 15; #numero de dias del promedio movil
+cashAl = 1000000; #dinero disponible para comprar acciones
+accionAl = 0; #numero de acciones disponibles para vender
+com = 0.0029; # porcentaje de cobro de comision por operacion
+promovil,balance,cash,numaccion = simtrading_prom(dataAl,nmovilAl,cashAl,accionAl,com);
+
+#calculo del rendimiento promedio del balance final
+rendAl = (balance[nmovilAl+1:ndataAl]/balance[nmovilAl:ndataAl-1])-1;
+rendAl = np.mean(rendAl);
+riskAl = np.std(rendAl);
+rendfAl = (balance[-1,0]/cashAl)-1;
+print('Rendm = %.4f, Riskm = %.4f, Rendf = %.4f' % (rendAl*100,riskAl*100,rendfAl*100));
+
+ndataAr,temp = np.shape(dataAl); #####------####-------------#####---------------#####------------#####---------###
+t = np.reshape(np.arange(0,ndataAl),(ndataAl,1));
+t1 = np.reshape(np.arange(0,ndataAl+1),(ndataAl+1,1));
+plt.figure(1);
+plt.subplot(3,1,1);
+plt.plot(dataAl[nmovilAl:,0],dataAl[nmovilAl:,1],'b-',t[nmovilAl:,0],promovil[nmovilAl:,0],'r-');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,2);
+plt.plot(t1[nmovilAl:,0],numaccion[nmovilAl:,0],'b-');
+plt.ylabel('acciones');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,3);
+plt.plot(t1[nmovilAl:,0],balance[nmovilAl:,0],'b-');
+plt.ylabel('balance');
+plt.xlabel('dia');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+
+
+
+#%%
+## Sexta  accion ----------------------------------------------------------------------------------------------
+
+Pralpe = alpe.values[:,5];
+
+ndataAlp=np.size(Pralpe)
+dataAlp = np.reshape(Prarca,(ndataAlp,1));
+dataAlp = np.append(np.reshape(np.arange(0,ndataAlp),(ndataAlp,1)),dataAlp,axis=1);
+
+plt.plot(dataAlp[:,0],dataAlp[:,1],'b-');
+plt.xlabel('dia');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.show();
+
+#Uso de la funcion
+nmovilAlp = 15; #numero de dias del promedio movil
+cashAlp = 1000000; #dinero disponible para comprar acciones
+accionAlp = 0; #numero de acciones disponibles para vender
+com = 0.0029; # porcentaje de cobro de comision por operacion
+promovil,balance,cash,numaccion = simtrading_prom(dataAlp,nmovilAlp,cashAlp,accionAlp,com);
+
+#calculo del rendimiento promedio del balance final
+rendAlp = (balance[nmovilAlp+1:ndataAlp]/balance[nmovilAlp:ndataAlp-1])-1;
+rendAlp = np.mean(rendAlp);
+riskAlp = np.std(rendAlp);
+rendfAlp = (balance[-1,0]/cashAlp)-1;
+print('Rendm = %.4f, Riskm = %.4f, Rendf = %.4f' % (rendAlp*100,riskAlp*100,rendfAlp*100));
+
+ndataAlp,temp = np.shape(dataAlp); #####------####-------------#####---------------#####------------#####---------###
+t = np.reshape(np.arange(0,ndataAlp),(ndataAlp,1));
+t1 = np.reshape(np.arange(0,ndataAlp+1),(ndataAlp+1,1));
+plt.figure(1);
+plt.subplot(3,1,1);
+plt.plot(dataAlp[nmovilAlp:,0],dataAlp[nmovilAlp:,1],'b-',t[nmovilAlp:,0],promovil[nmovilAlp:,0],'r-');
+plt.ylabel('precio');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,2);
+plt.plot(t1[nmovilAlp:,0],numaccion[nmovilAlp:,0],'b-');
+plt.ylabel('acciones');
+plt.grid(color='k', linestyle='--');
+plt.subplot(3,1,3);
+plt.plot(t1[nmovilAlp:,0],balance[nmovilAlp:,0],'b-');
+plt.ylabel('balance');
+plt.xlabel('dia');
+plt.grid(color='k', linestyle='--');
